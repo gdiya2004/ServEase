@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../../app/components/Navbar";
 import Link from "next/link";
+import CalendarPicker from "../components/CalendarPicker";
 
 export default function Dashboard() {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -11,6 +12,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [bookingFilter, setBookingFilter] = useState<"all" | "pending" | "confirmed" | "completed">("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [calendarService, setCalendarService] = useState<any | null>(null);
 
   const router = useRouter();
 
@@ -89,6 +91,30 @@ export default function Dashboard() {
     }
   };
 
+  // 📅 Vendor toggle date block / unblock
+  const handleToggleBlockDate = async (dateStr: string, isCurrentlyBlocked: boolean) => {
+    if (!calendarService) return;
+    const action = isCurrentlyBlocked ? "unblock" : "block";
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/services/${calendarService._id}/availability`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: dateStr, action })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCalendarService((prev: any) => ({ ...prev, bookedDates: data.bookedDates }));
+        setServices(prev =>
+          prev.map(s => s._id === calendarService._id ? { ...s, bookedDates: data.bookedDates } : s)
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const totalValue = services.reduce((acc, s) => acc + (s.price || 0), 0);
 
   const pendingBookings = bookings.filter(b => !b.status || b.status === "pending");
@@ -157,7 +183,7 @@ export default function Dashboard() {
                 Vendor <span className="text-gradient italic font-normal text-gradient-glow font-serif">Workspace</span>
               </h1>
               <p className="text-[#6b6258] text-xs mt-1.5 uppercase tracking-wider">
-                Manage your event listings and take action on incoming client bookings.
+                Manage your event listings, calendar availability, and client booking requests.
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -226,22 +252,36 @@ export default function Dashboard() {
                   {services.map((s, i) => (
                     <div
                       key={s._id}
-                      className={`flex justify-between items-center ${i > 0 ? "pt-4" : ""}`}
+                      className={`flex flex-col gap-3 ${i > 0 ? "pt-4" : ""}`}
                     >
-                      <div className="space-y-1">
-                        <span className="text-[9px] text-[#c99a24] font-semibold uppercase tracking-widest bg-[#efe7da] px-2 py-0.5 rounded-none">
-                          {s.category}
-                        </span>
-                        <h4 className="text-sm font-serif font-bold text-[#242424] mt-1">{s.name}</h4>
-                        <p className="text-[11px] text-[#6b6258] font-sans font-medium">₹{s.price} • {s.location}</p>
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-1">
+                          <span className="text-[9px] text-[#c99a24] font-semibold uppercase tracking-widest bg-[#efe7da] px-2 py-0.5 rounded-none">
+                            {s.category}
+                          </span>
+                          <h4 className="text-sm font-serif font-bold text-[#242424] mt-1">{s.name}</h4>
+                          <p className="text-[11px] text-[#6b6258] font-sans font-medium">₹{s.price} • {s.location}</p>
+                        </div>
+
+                        <button
+                          onClick={() => handleDelete(s._id)}
+                          className="text-xs font-semibold text-rose-600 hover:text-rose-500 bg-white hover:bg-stone-50 border border-[#e8dfd2] rounded-none px-2.5 py-1 transition cursor-pointer uppercase tracking-wider text-[10px]"
+                        >
+                          Delete
+                        </button>
                       </div>
 
-                      <button
-                        onClick={() => handleDelete(s._id)}
-                        className="text-xs font-semibold text-rose-600 hover:text-rose-500 bg-white hover:bg-stone-50 border border-[#e8dfd2] rounded-none px-3 py-1.5 transition cursor-pointer uppercase tracking-wider text-[10px]"
-                      >
-                        Delete
-                      </button>
+                      <div className="flex items-center justify-between gap-2 pt-1">
+                        <span className="text-[10px] text-[#6b6258]">
+                          📅 {s.bookedDates?.length || 0} Locked Dates
+                        </span>
+                        <button
+                          onClick={() => setCalendarService(s)}
+                          className="text-[10px] uppercase font-bold text-[#c99a24] hover:text-[#b0841a] bg-[#efe7da]/50 hover:bg-[#efe7da] border border-[#e8dfd2] px-3 py-1.5 transition cursor-pointer"
+                        >
+                          📅 Manage Calendar
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -296,10 +336,18 @@ export default function Dashboard() {
                           </div>
                         </div>
 
-                        <div className="bg-white border border-[#e8dfd2]/60 p-3 rounded-none space-y-1.5 text-xs text-[#6b6258]">
-                          <p><strong>Contact Phone:</strong> <span className="font-mono text-[#242424]">{b.phone}</span></p>
+                        <div className="bg-white border border-[#e8dfd2]/60 p-3.5 rounded-none space-y-1.5 text-xs text-[#6b6258]">
+                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#e8dfd2]/40 pb-2">
+                            <p><strong>Contact Phone:</strong> <span className="font-mono text-[#242424]">{b.phone}</span></p>
+                            {b.eventDate && (
+                              <span className="bg-[#efe7da] text-[#c99a24] font-bold px-2 py-0.5 text-[10px] uppercase tracking-wider">
+                                📅 Target Date: {b.eventDate}
+                              </span>
+                            )}
+                          </div>
+
                           {b.message && (
-                            <p className="text-[11px] leading-relaxed pt-1 border-t border-[#e8dfd2]/40 font-sans">
+                            <p className="text-[11px] leading-relaxed pt-1 font-sans">
                               <strong>Client Message:</strong> "{b.message}"
                             </p>
                           )}
@@ -374,6 +422,48 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* 📅 Vendor Date Availability Modal */}
+      {calendarService && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-[#e8dfd2] max-w-lg w-full p-6 space-y-4 shadow-xl animate-fade-in-up">
+            <div className="flex justify-between items-start border-b border-[#e8dfd2] pb-3">
+              <div>
+                <span className="text-[9px] uppercase font-bold text-[#c99a24] bg-[#efe7da] px-2 py-0.5">
+                  Slot Management
+                </span>
+                <h3 className="text-base font-serif font-bold text-[#242424] mt-1">
+                  {calendarService.name}
+                </h3>
+                <p className="text-[11px] text-[#6b6258]">
+                  Click any date to toggle between 🟢 Available and 🔴 Blocked / Reserved.
+                </p>
+              </div>
+              <button
+                onClick={() => setCalendarService(null)}
+                className="text-[#6b6258] hover:text-[#242424] text-lg font-bold p-1 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <CalendarPicker
+              isVendorMode={true}
+              bookedDates={calendarService.bookedDates || []}
+              onToggleDateBlock={handleToggleBlockDate}
+            />
+
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setCalendarService(null)}
+                className="bg-[#242424] hover:bg-[#3a3a3a] text-white text-xs uppercase font-bold px-6 py-2.5 transition cursor-pointer"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

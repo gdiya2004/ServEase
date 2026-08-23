@@ -25,9 +25,13 @@ const serviceSchema = new mongoose.Schema({
     default: Date.now
   },
   owner: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "User"
-}
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  },
+  bookedDates: {
+    type: [String],
+    default: []
+  }
 });
 
 module.exports = mongoose.model("Service", serviceSchema);

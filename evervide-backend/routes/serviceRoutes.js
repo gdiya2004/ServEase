@@ -65,6 +65,49 @@ router.get("/vendor/:id", async (req, res) => {
   }
 });
 
+router.get("/:id/availability", async (req, res) => {
+  try {
+    const service = await Service.findById(req.params.id);
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
+    res.json({ bookedDates: service.bookedDates || [] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/:id/availability", async (req, res) => {
+  try {
+    const { date, action } = req.body; // action: 'block' | 'unblock'
+    if (!date) {
+      return res.status(400).json({ message: "Date is required (YYYY-MM-DD)" });
+    }
+
+    const service = await Service.findById(req.params.id);
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
+
+    let dates = service.bookedDates || [];
+
+    if (action === "unblock") {
+      dates = dates.filter(d => d !== date);
+    } else {
+      if (!dates.includes(date)) {
+        dates.push(date);
+      }
+    }
+
+    service.bookedDates = dates;
+    await service.save();
+
+    res.json({ message: "Availability updated", bookedDates: service.bookedDates });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.delete("/:id", async (req, res) => {
   try {
     await Service.findByIdAndDelete(req.params.id);
@@ -73,4 +116,5 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 module.exports = router;

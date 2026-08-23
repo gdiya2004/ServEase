@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from "react";
 import Navbar from "../../components/Navbar";
 import Link from "next/link";
+import CalendarPicker from "../../components/CalendarPicker";
 
 const getCategoryImage = (category: string) => {
   const cat = (category || "").toLowerCase();
@@ -41,6 +42,7 @@ export default function ServicePage({ params }: any) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +52,9 @@ export default function ServicePage({ params }: any) {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
-        setCurrentUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+        setCurrentUser(parsed);
+        if (parsed.name) setName(parsed.name);
       } catch (e) {
         console.error(e);
       }
@@ -115,6 +119,10 @@ export default function ServicePage({ params }: any) {
       alert("Please login first");
       return;
     }
+    if (!selectedDate) {
+      alert("Please select your event date on the availability calendar.");
+      return;
+    }
     if (!name || !phone) {
       alert("Please provide name and phone number");
       return;
@@ -131,18 +139,20 @@ export default function ServicePage({ params }: any) {
           userId: currentUser._id,
           name,
           phone,
-          message
+          message,
+          eventDate: selectedDate
         })
       });
 
+      const data = await res.json();
+
       if (res.ok) {
         setBookingSuccess(true);
-        setName("");
-        setPhone("");
         setMessage("");
-        setTimeout(() => setBookingSuccess(false), 5000);
+        // Reload service to update booked dates if needed
+        setTimeout(() => setBookingSuccess(false), 8000);
       } else {
-        alert("Failed to submit booking request.");
+        alert(data.message || "Failed to submit booking request.");
       }
     } catch (e) {
       console.error(e);
@@ -294,17 +304,49 @@ export default function ServicePage({ params }: any) {
                   ₹{service.price}
                 </span>
 
+                <div className="mt-4 pt-4 border-t border-[#e8dfd2]/60 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-[#6b6258]">
+                      Live Date Availability
+                    </span>
+                    <span className="text-[9px] text-emerald-700 font-bold uppercase">
+                      ● Real-time
+                    </span>
+                  </div>
+
+                  <CalendarPicker
+                    bookedDates={service?.bookedDates || []}
+                    selectedDate={selectedDate}
+                    onSelectDate={(d) => {
+                      setSelectedDate(d);
+                      if (!showForm && currentUser) setShowForm(true);
+                    }}
+                  />
+
+                  {selectedDate ? (
+                    <div className="bg-emerald-50 border border-emerald-300 p-2.5 text-center">
+                      <span className="text-[10px] text-emerald-900 font-bold uppercase tracking-wider block">
+                        📅 Chosen Date: {selectedDate}
+                      </span>
+                    </div>
+                  ) : (
+                    <p className="text-[10px] text-[#6b6258] italic text-center font-medium">
+                      Select an available date on the calendar to reserve
+                    </p>
+                  )}
+                </div>
+
                 {currentUser ? (
                   !showForm ? (
                     <button
                       onClick={() => setShowForm(true)}
-                      className="w-full bg-[#242424] hover:bg-[#3a3a3a] text-white font-semibold py-3.5 rounded-none mt-6 transition duration-200 shadow-none text-xs uppercase tracking-wider cursor-pointer"
+                      className="w-full bg-[#242424] hover:bg-[#3a3a3a] text-white font-semibold py-3.5 rounded-none mt-4 transition duration-200 shadow-none text-xs uppercase tracking-wider cursor-pointer btn-premium"
                     >
-                      Book Event
+                      {selectedDate ? "Proceed to Book Chosen Date" : "Book Event"}
                     </button>
                   ) : null
                 ) : (
-                  <div className="mt-6 p-5 bg-[#faf7f1]/70 border border-[#e8dfd2] rounded-none text-center">
+                  <div className="mt-4 p-5 bg-[#faf7f1]/70 border border-[#e8dfd2] rounded-none text-center">
                     <p className="text-[#6b6258] text-[11px] uppercase tracking-wider mb-4">Sign in to book this event or contact the vendor.</p>
                     <Link
                       href="/login"
@@ -326,7 +368,7 @@ export default function ServicePage({ params }: any) {
                           <div>
                             <p className="font-bold uppercase tracking-wider text-[11px]">Request Sent to Vendor!</p>
                             <p className="text-[11px] text-emerald-800 mt-0.5 font-normal">
-                              The vendor has received your inquiry and will review it in real-time.
+                              The vendor has received your inquiry for <strong>{selectedDate}</strong> and will review it in real-time.
                             </p>
                           </div>
                         </div>
@@ -339,6 +381,15 @@ export default function ServicePage({ params }: any) {
                         </Link>
                       </div>
                     )}
+
+                    <div>
+                      <label className="block text-[9px] font-semibold text-[#6b6258] uppercase tracking-widest mb-1.5">Selected Date</label>
+                      <input
+                        value={selectedDate || "Please pick a date on the calendar above"}
+                        readOnly
+                        className="glass-input w-full px-3 py-2.5 rounded-none text-xs font-bold text-[#c99a24] bg-stone-50 focus:outline-none"
+                      />
+                    </div>
 
                     <div>
                       <label className="block text-[9px] font-semibold text-[#6b6258] uppercase tracking-widest mb-1.5">Your Name</label>

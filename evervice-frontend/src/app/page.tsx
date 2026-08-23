@@ -175,20 +175,26 @@ export default function Home() {
               Discover trusted venues, decorators, photographers, caterers and event professionals for celebrations worth remembering.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
+              <Link
+                href="/ai-planner"
+                className="bg-[#c99a24] hover:bg-[#b0841a] text-white font-semibold text-xs tracking-wider uppercase px-8 py-4 rounded-none transition duration-200 cursor-pointer shadow-sm shadow-[#c99a24]/10 btn-premium flex items-center gap-2"
+              >
+                <span>✨ Try AI Budget Planner</span>
+              </Link>
               <button
                 onClick={() => {
                   const el = document.getElementById("services-section");
                   el?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="bg-[#c99a24] hover:bg-[#b0841a] text-white font-semibold text-xs tracking-wider uppercase px-8 py-4 rounded-none transition duration-200 cursor-pointer shadow-sm shadow-[#c99a24]/10 btn-premium"
+                className="bg-[#242424] hover:bg-[#3a3a3a] text-white font-semibold text-xs tracking-wider uppercase px-8 py-4 rounded-none transition duration-200 cursor-pointer btn-premium"
               >
                 Explore Events
               </button>
               <Link
                 href={getVendorCTA()}
-                className="border border-[#242424] hover:bg-[#242424] hover:text-white text-[#242424] font-semibold text-xs tracking-wider uppercase px-8 py-4 rounded-none transition duration-200 btn-premium"
+                className="border border-[#242424] hover:bg-stone-50 text-[#242424] font-semibold text-xs tracking-wider uppercase px-6 py-4 rounded-none transition duration-200"
               >
-                {user?.role === "vendor" ? "Go to Dashboard" : "List Your Business"}
+                {user?.role === "vendor" ? "Dashboard" : "List Business"}
               </Link>
             </div>
           </div>
@@ -262,8 +268,31 @@ export default function Home() {
         </form>
       </section>
 
+      {/* 🤖 AI CONCIERGE SPOTLIGHT */}
+      <section className="px-6 md:px-8 max-w-5xl mx-auto w-full pt-10">
+        <div className="bg-white border-2 border-[#c99a24]/80 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+          <div className="space-y-2 text-center md:text-left">
+            <div className="inline-flex items-center gap-2 bg-[#efe7da] px-3 py-1 text-[#c99a24] text-[9px] font-bold uppercase tracking-widest">
+              <span>✨ Autonomous AI Event Concierge</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-serif font-black uppercase text-[#242424]">
+              Plan & Bundle Your Whole Event in 30 Seconds
+            </h3>
+            <p className="text-[#6b6258] text-xs max-w-xl font-medium">
+              Have a budget in mind? Tell our AI your city, guest count, and vision — we'll assemble an optimized, all-in-one vendor package.
+            </p>
+          </div>
+          <Link
+            href="/ai-planner"
+            className="bg-[#c99a24] hover:bg-[#b0841a] text-white font-bold text-xs uppercase tracking-wider px-8 py-4 transition flex-shrink-0 btn-premium whitespace-nowrap"
+          >
+            Launch AI Planner →
+          </Link>
+        </div>
+      </section>
+
       {/* SERVICES CATALOG */}
-      <section id="services-section" className="py-20 px-6 md:px-8 max-w-5xl mx-auto w-full scroll-mt-10">
+      <section id="services-section" className="py-16 px-6 md:px-8 max-w-5xl mx-auto w-full scroll-mt-10">
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-serif font-semibold text-[#242424] uppercase tracking-wider">
             Find Everything You Need for Your Event

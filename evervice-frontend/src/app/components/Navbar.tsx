@@ -89,6 +89,12 @@ export default function Navbar() {
           About
         </button>
         <Link
+          href="/ai-planner"
+          className="flex items-center gap-1 text-[#c99a24] hover:text-[#b0841a] font-bold tracking-wider text-[10px] uppercase bg-[#efe7da]/70 border border-[#e8dfd2] px-3 py-1.5 transition hover:scale-105 duration-150"
+        >
+          <span>✨ AI Concierge</span>
+        </Link>
+        <Link
           href={user ? (user.role === "vendor" ? "/dashboard" : "/vendor-request") : "/login"}
           className="nav-link-underline text-[#6b6258] hover:text-[#242424] font-semibold tracking-wider text-[10px] uppercase"
         >
@@ -229,6 +235,13 @@ export default function Navbar() {
         >
           About
         </button>
+        <Link
+          href="/ai-planner"
+          onClick={() => setMobileMenuOpen(false)}
+          className="text-[#c99a24] font-bold tracking-wider text-xs uppercase transition-colors duration-200 py-1 flex items-center gap-1.5"
+        >
+          <span>✨ AI Concierge</span>
+        </Link>
         <Link
           href={user ? (user.role === "vendor" ? "/dashboard" : "/vendor-request") : "/login"}
           onClick={() => setMobileMenuOpen(false)}

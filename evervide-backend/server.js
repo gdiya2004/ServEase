@@ -7,6 +7,7 @@ const serviceRoutes = require("./routes/serviceRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const authRoutes = require("./routes/authRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/vendor", vendorRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.get("/",(req,res)=>{
     res.send("Evervice API is ruuning");

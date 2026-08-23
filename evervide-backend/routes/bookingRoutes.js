@@ -7,11 +7,16 @@ const {verifyToken,verifyAdmin} = require("../middleware/auth");
 
 router.post("/add", async (req, res) => {
   try {
-    const { serviceId, name, phone, message, userId } = req.body;
+    const { serviceId, name, phone, message, userId, eventDate } = req.body;
 
     const service = await Service.findById(serviceId);
     if (!service) {
       return res.status(404).json({ message: "Service not found" });
+    }
+
+    // Check date availability if specified
+    if (eventDate && service.bookedDates && service.bookedDates.includes(eventDate)) {
+      return res.status(400).json({ message: "Selected event date is already booked or unavailable." });
     }
 
     const booking = new Booking({
@@ -20,19 +25,18 @@ router.post("/add", async (req, res) => {
       vendorId: service.owner,
       name,
       phone,
-      message
+      message,
+      eventDate: eventDate || ""
     });
 
     await booking.save();
 
-    res.json({ message: "Booking created" });
+    res.json({ message: "Booking request created successfully", booking });
 
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
-
 
 router.get("/vendor/:id", async (req, res) => {
   try {
@@ -83,6 +87,20 @@ router.patch("/:id/status", async (req, res) => {
 
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
+    }
+
+    // If confirmed, lock the event date on the Service
+    if (status === "confirmed" && booking.eventDate && booking.serviceId) {
+      await Service.findByIdAndUpdate(booking.serviceId._id || booking.serviceId, {
+        $addToSet: { bookedDates: booking.eventDate }
+      });
+    }
+
+    // If rejected, unblock date if desired
+    if (status === "rejected" && booking.eventDate && booking.serviceId) {
+      await Service.findByIdAndUpdate(booking.serviceId._id || booking.serviceId, {
+        $pull: { bookedDates: booking.eventDate }
+      });
     }
 
     res.json({ message: "Status updated", booking });
