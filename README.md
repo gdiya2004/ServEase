@@ -9,7 +9,7 @@
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
 [![Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7?style=for-the-badge&logo=render)](https://render.com/)
 
-**ServEase** is an end-to-end, production-grade event service marketplace and autonomous AI event planner designed to bridge the gap between verified event service vendors, clients, and platform administrators. Built with a modern micro-client architecture using **Next.js 16 (App Router)**, **React 19**, and an **Express 5 REST API** backed by **MongoDB Atlas**.
+**ServEase** is an end-to-end, production-grade event service marketplace and autonomous AI event planner designed to bridge the gap between verified event service vendors, individual skilled professionals, clients, and platform administrators. Built with a modern micro-client architecture using **Next.js 16 (App Router)**, **React 19**, and an **Express 5 REST API** backed by **MongoDB Atlas**.
 
 ---
 
@@ -47,7 +47,7 @@ flowchart TD
 
     subgraph DatabaseLayer [Data Layer - MongoDB Atlas Clusters]
         P[(Users Collection)]
-        Q[(Services Collection)]
+        Q[(Services Collection - 44+ Listings)]
         R[(Bookings Collection)]
         S[(VendorRequests Collection)]
         T[(Reviews Collection)]
@@ -62,21 +62,37 @@ flowchart TD
 ## ✨ Key Technical Pillars & Standout Features
 
 ### 🤖 1. Autonomous AI Event Concierge & Smart Budget Package Planner
-* **How it Works:** Customers enter their celebration type (*Wedding, Engagement, Birthday, Gala*), target city, guest count, and total budget (e.g. *₹1,00,000*).
-* **Heuristic Optimization Engine (`/api/ai/plan-event`):** Partitions the total budget using industry standard benchmarks:
-  $$\text{Catering: 35\%} \quad | \quad \text{Decor: 30\%} \quad | \quad \text{Photography: 20\%} \quad | \quad \text{DJ/Music: 10\%} \quad | \quad \text{Contingency: 5\%}$$
-* **Best-Fit Knapsack Search:** Matches verified vendors within category quotas, computes total cost & contingency savings, generates a 5-point event schedule, and enables **1-Click Coordinated Bundled Requests**.
+* **Dynamic Natural Language Intent Engine:** Captures celebration type (*Wedding, Engagement, Birthday, Gala*), city, guest count, total budget, and explicit aesthetic requests.
+* **Semantic Category Mapping & Knapsack Optimization (`/api/ai/plan-event`):** Partitions the budget using adaptive industry benchmarks across primary & specialized services:
+  $$\text{Catering: 32\%} \quad | \quad \text{Decor: 28\%} \quad | \quad \text{Photography: 18\%} \quad | \quad \text{MUA / Makeup: 8\%} \quad | \quad \text{DJ / Sound: 8\%} \quad | \quad \text{Solo Music / Anchor: 6\%} \quad | \quad \text{Mehendi / Cake: 5\%} \quad | \quad \text{Power / Security: 5\%}$$
+* **Best-Fit Knapsack Search:** Matches verified vendors within category quotas, computes total package cost & contingency savings, creates a 6-point chronological event day schedule, and enables **1-Click Coordinated Bundled Bookings**.
 
 ---
 
-### 📅 2. Interactive Live Slot & Date Availability Calendar (Airbnb-Style)
+### 🎪 2. Both Large Vendor Agencies & Individual Skilled Specialists
+ServEase natively accommodates full-service event companies as well as individual solo tradespeople:
+* 🌸 **Luxury Event Decorators & Floral Stylists**
+* 🍽️ **Gourmet Multi-Cuisine Caterers & Live Food Stations**
+* 📸 **Candid Cinematographers & 4K Drone Operators**
+* 🎵 **Club DJs, Live Bands & Punjabi Dhol Troupes**
+* 💄 **Bridal & Party Makeup Artists (MUAs)**
+* 🎨 **Organic Rajasthani Bridal Mehendi / Henna Artists**
+* 🎂 **Custom Theme & Fondant Cake Bakers**
+* 🎷 **Solo Instrumentalists (Saxophonists, Violinists, Flute Players)**
+* 🎤 **Professional Event Emcees / Stand-Up Hosts**
+* ⚡ **On-Site Event Electricians & Silent Generator (DG Set) Power Engineers**
+* 🛡️ **Licensed VIP Security Bouncers & Crowd Control Teams**
+
+---
+
+### 📅 3. Interactive Live Slot & Date Availability Calendar (Airbnb-Style)
 * **Double-Booking Prevention:** Custom `CalendarPicker` component on service pages color-codes dates (**🟢 Available**, **🔴 Booked / Unavailable**, **🟡 Selected**).
 * **Automatic Date Locking:** When a vendor clicks `Accept Booking`, the chosen `eventDate` is automatically appended to the service's `bookedDates` list to lock out conflicting clients.
 * **Vendor Slot Management:** Vendors can manually block or unblock specific calendar dates from their dashboard.
 
 ---
 
-### 📱 3. Real-Time Customer Service Management Platform (`/my-bookings`)
+### 📱 4. Real-Time Customer Service Management Platform (`/my-bookings`)
 * **Live Background Polling:** Auto-syncs every 12 seconds with a manual `🔄 Refresh Status` control.
 * **4-Stage Visual Fulfillment Stepper:**  
   `[1. Requested ✓]  ➔  [2. Under Vendor Review ⏳]  ➔  [3. Decision: Accepted ✅ / Disapproved ❌]  ➔  [4. Service Delivered ⭐]`
@@ -86,14 +102,14 @@ flowchart TD
 
 ---
 
-### 🧑‍💼 4. Vendor Workspace & Interactive Fulfillment Pipeline (`/dashboard`)
+### 🧑‍💼 5. Vendor Workspace & Interactive Fulfillment Pipeline (`/dashboard`)
 * **Listing Management:** Create and delete event listings, track total portfolio valuation, and manage slot calendars.
 * **Interactive Booking Pipeline:** Filter bookings by `All`, `Pending`, `Confirmed`, and `Completed`.
 * **1-Click Actions:** Real-time state transitions: **`✓ Accept Booking`**, **`✕ Decline`**, and **`✓ Mark as Completed`**.
 
 ---
 
-### 🛡️ 5. Admin Governance & Command Center (`/admin`)
+### 🛡️ 6. Admin Governance & Command Center (`/admin`)
 * **Pending Vendor Applications:** Inspect applicant credentials, portfolio images, and business details with 1-click **Approve** and **Reject** controls.
 * **Approved Vendors Directory:** Dedicated audit table showing verified vendor accounts, contact numbers, locations, and active status.
 * **Customer Bookings Feed:** Centralized audit log of all customer reservations across every vendor on the platform.
@@ -151,7 +167,7 @@ ServEase/
 │   │   ├── reviewRoutes.js        # Review CRUD operations
 │   │   ├── serviceRoutes.js       # Filtered search & calendar slot availability
 │   │   └── vendorRoutes.js        # Approved directory & application review
-│   ├── seedAllDatabases.js        # Universal MongoDB Atlas multi-target seeder
+│   ├── seedAllDatabases.js        # Universal MongoDB Atlas multi-target seeder (44 services)
 │   ├── package.json
 │   └── server.js                  # Express 5 application entrypoint
 │
@@ -219,7 +235,7 @@ echo "PORT=5000" >> .env
 echo "MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/test?retryWrites=true&w=majority" >> .env
 echo "JWT_SECRET=your_secret_jwt_key_2026" >> .env
 
-# Seed 27+ realistic services & approved vendor requests
+# Seed 44+ realistic services, verified vendors & approved vendor requests
 node seedAllDatabases.js
 
 # Start backend server
@@ -239,6 +255,15 @@ npm run dev
 ```
 
 Open **[http://localhost:3000](http://localhost:3000)** in your browser.
+
+---
+
+## 📝 ATS Resume Highlights (Copy-Paste Ready)
+
+* **Engineered a scalable full-stack marketplace** with 3-tier RBAC (*Customer, Vendor, Admin*), JWT authentication, and modular Express REST APIs.
+* **Built an AI Event Concierge & Budget Planner** using Knapsack optimization algorithms to curate multi-vendor bundles, cutting planning time to under 30 seconds.
+* **Implemented real-time booking pipelines** featuring a 4-step live fulfillment stepper, background data sync, and direct WhatsApp/call contact shortcuts.
+* **Developed an Airbnb-style slot availability calendar** to prevent double-bookings, alongside an Admin portal to audit vendors and platform reservations.
 
 ---
 
