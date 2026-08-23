@@ -11,6 +11,7 @@ router.post("/plan-event", async (req, res) => {
     const numGuests = Number(guestCount) || 100;
     const cleanLocation = (location || "").trim();
     const eventName = eventType || "Celebration Event";
+    const userPref = (preferences || "").toLowerCase();
 
     // 1. Fetch available services from DB matching location or general catalog
     let filter = {};
@@ -20,102 +21,203 @@ router.post("/plan-event", async (req, res) => {
 
     let availableServices = await Service.find(filter).populate("owner", "name email");
     
-    // If no services in that specific location, fallback to all available services
+    // Fallback to all available if location has very few
     if (availableServices.length === 0) {
       availableServices = await Service.find().populate("owner", "name email");
     }
 
-    // 2. Budget distribution percentages by event category
-    // Typical event industry allocation benchmarks
-    const budgetAllocations = {
-      decor: 0.30,      // 30% on Decor & Venue styling
-      catering: 0.35,   // 35% on Catering & Food
-      photography: 0.20,// 20% on Photography & Videography
-      music: 0.10,      // 10% on DJ / Music / Entertainment
-      buffer: 0.05      // 5% contingency buffer
+    // 2. Classify services into distinct categories
+    const categorized = {
+      decor: availableServices.filter(s => /decor|stage|flower|mandap|canopy|design|hall|venue/i.test(s.category + " " + s.name)),
+      catering: availableServices.filter(s => /cater|food|dinner|buffet|lunch|feast|chef|chaat/i.test(s.category + " " + s.name)),
+      photography: availableServices.filter(s => /photo|video|cinemat|shoot|camera|album|drone/i.test(s.category + " " + s.name)),
+      music: availableServices.filter(s => /dj|band|sound|dhol|edm|music/i.test(s.category + " " + s.name)),
+      makeup: availableServices.filter(s => /makeup|mua|hair|salon|groom|bridal|beauty/i.test(s.category + " " + s.name)),
+      mehendi: availableServices.filter(s => /mehendi|mehndi|henna/i.test(s.category + " " + s.name)),
+      cake: availableServices.filter(s => /cake|baker|pastry|dessert|confection/i.test(s.category + " " + s.name)),
+      anchor: availableServices.filter(s => /anchor|emcee|host|mc|speaker/i.test(s.category + " " + s.name)),
+      soloMusician: availableServices.filter(s => /violin|sax|flute|acoustic|guitar|singer|solo/i.test(s.category + " " + s.name)),
+      securityPower: availableServices.filter(s => /bouncer|security|guard|electric|power|generator/i.test(s.category + " " + s.name)),
+      all: availableServices
     };
 
-    // 3. Intelligent Category Matcher & Optimizer
-    const categorizedServices = {
-      decor: availableServices.filter(s => /decor|stage|flower|design|hall|venue/i.test(s.category + " " + s.name)),
-      catering: availableServices.filter(s => /cater|food|dinner|buffet|lunch|chef/i.test(s.category + " " + s.name)),
-      photography: availableServices.filter(s => /photo|video|shoot|camera|album/i.test(s.category + " " + s.name)),
-      music: availableServices.filter(s => /dj|music|band|sound|entertain/i.test(s.category + " " + s.name)),
-      other: availableServices
-    };
+    // 3. Adaptive Dynamic Allocation based on Event Type & Preferences
+    const isWeddingOrEngagement = /wed|marr|engag|ring|sangeet|reception/i.test(eventName);
+    const isBirthdayOrAnniv = /birth|anniv|kid|party/i.test(eventName);
+    const wantsMehendi = /mehendi|mehndi|henna/i.test(userPref) || isWeddingOrEngagement;
+    const wantsMakeup = /makeup|mua|glam|beauty/i.test(userPref) || isWeddingOrEngagement;
+    const wantsCake = /cake|baker|pastry/i.test(userPref) || isBirthdayOrAnniv;
+    const wantsAnchor = /anchor|emcee|host|mc/i.test(userPref);
+    const wantsSoloMusician = /violin|sax|flute|acoustic|solo/i.test(userPref);
+    const wantsSecurityPower = /bouncer|security|guard|electric|power|generator/i.test(userPref);
 
     const selectedPackage = [];
     let allocatedTotal = 0;
 
-    // Helper to pick closest fitting service within budget quota
-    const pickBestFit = (list, targetBudget, categoryName) => {
+    // Helper to pick closest fitting service within budget quota without duplicates
+    const pickBestFit = (list, targetBudget) => {
       if (!list || list.length === 0) return null;
-      // Sort by price ascending
-      const sorted = [...list].sort((a, b) => (a.price || 0) - (b.price || 0));
-      // Try to find highest price under targetBudget, or lowest price available
+      // Filter out already selected services
+      const available = list.filter(item => !selectedPackage.some(p => p.service._id.toString() === item._id.toString()));
+      if (available.length === 0) return null;
+
+      const sorted = [...available].sort((a, b) => (a.price || 0) - (b.price || 0));
       const fits = sorted.filter(s => (s.price || 0) <= targetBudget);
-      const chosen = fits.length > 0 ? fits[fits.length - 1] : sorted[0];
-      return chosen;
+      return fits.length > 0 ? fits[fits.length - 1] : sorted[0];
     };
 
-    // Select Decor
-    const targetDecorBudget = numBudget * budgetAllocations.decor;
-    const decorPick = pickBestFit(categorizedServices.decor.length ? categorizedServices.decor : categorizedServices.other, targetDecorBudget, "Decor");
+    // A. Main Decor (25-30%)
+    const decorPick = pickBestFit(categorized.decor.length ? categorized.decor : categorized.all, numBudget * 0.28);
     if (decorPick) {
       selectedPackage.push({
-        role: "Event Styling & Decoration",
+        role: "Event Styling & Decor",
         category: "Decoration",
         service: decorPick,
-        allocatedBudget: targetDecorBudget,
+        allocatedBudget: numBudget * 0.28,
         actualPrice: decorPick.price,
-        notes: `Selected for ${numGuests} guests setup with full thematic aesthetics.`
+        notes: `Thematic stage and ambient setup planned for ${numGuests} guests.`
       });
       allocatedTotal += decorPick.price;
     }
 
-    // Select Catering
-    const targetCateringBudget = numBudget * budgetAllocations.catering;
-    const cateringPick = pickBestFit(categorizedServices.catering.length ? categorizedServices.catering : categorizedServices.other, targetCateringBudget, "Catering");
-    if (cateringPick && (!decorPick || cateringPick._id.toString() !== decorPick._id.toString())) {
+    // B. Gourmet Catering (30-35%)
+    const caterPick = pickBestFit(categorized.catering.length ? categorized.catering : categorized.all, numBudget * 0.32);
+    if (caterPick) {
       selectedPackage.push({
         role: "Gourmet Catering & Dining",
         category: "Catering",
-        service: cateringPick,
-        allocatedBudget: targetCateringBudget,
-        actualPrice: cateringPick.price,
-        notes: `Crafted multi-course dining package tailored for ~${numGuests} attendees.`
+        service: caterPick,
+        allocatedBudget: numBudget * 0.32,
+        actualPrice: caterPick.price,
+        notes: `Curated multi-course dining package tailored for ~${numGuests} attendees.`
       });
-      allocatedTotal += cateringPick.price;
+      allocatedTotal += caterPick.price;
     }
 
-    // Select Photography
-    const targetPhotoBudget = numBudget * budgetAllocations.photography;
-    const photoPick = pickBestFit(categorizedServices.photography.length ? categorizedServices.photography : categorizedServices.other, targetPhotoBudget, "Photography");
-    if (photoPick && !selectedPackage.some(p => p.service._id.toString() === photoPick._id.toString())) {
+    // C. Photography & Film (15-20%)
+    const photoPick = pickBestFit(categorized.photography.length ? categorized.photography : categorized.all, numBudget * 0.18);
+    if (photoPick) {
       selectedPackage.push({
         role: "Cinematic Photography & Film",
         category: "Photography",
         service: photoPick,
-        allocatedBudget: targetPhotoBudget,
+        allocatedBudget: numBudget * 0.18,
         actualPrice: photoPick.price,
-        notes: "Full-day candid coverage, high-resolution digital gallery, and portraits."
+        notes: "Full candid coverage, high-resolution digital gallery, and portraits."
       });
       allocatedTotal += photoPick.price;
     }
 
-    // Select DJ / Entertainment if budget allows
-    const targetMusicBudget = numBudget * budgetAllocations.music;
-    const musicPick = pickBestFit(categorizedServices.music.length ? categorizedServices.music : categorizedServices.other, targetMusicBudget, "Music");
-    if (musicPick && !selectedPackage.some(p => p.service._id.toString() === musicPick._id.toString())) {
-      selectedPackage.push({
-        role: "Sound & Entertainment",
-        category: "Entertainment",
-        service: musicPick,
-        allocatedBudget: targetMusicBudget,
-        actualPrice: musicPick.price,
-        notes: "Premium audio system and curated party playlist."
-      });
-      allocatedTotal += musicPick.price;
+    // D. Bridal / Party Makeup (MUA) (if requested or wedding)
+    if (wantsMakeup && categorized.makeup.length > 0) {
+      const makeupPick = pickBestFit(categorized.makeup, numBudget * 0.08);
+      if (makeupPick) {
+        selectedPackage.push({
+          role: "Bridal & Party Makeup (MUA)",
+          category: "Makeup",
+          service: makeupPick,
+          allocatedBudget: numBudget * 0.08,
+          actualPrice: makeupPick.price,
+          notes: "Professional HD / Airbrush makeup with hairstyling & draping."
+        });
+        allocatedTotal += makeupPick.price;
+      }
+    }
+
+    // E. Mehendi / Henna Artist (if requested or wedding)
+    if (wantsMehendi && categorized.mehendi.length > 0) {
+      const mehendiPick = pickBestFit(categorized.mehendi, numBudget * 0.05);
+      if (mehendiPick) {
+        selectedPackage.push({
+          role: "Bridal Mehendi & Henna Art",
+          category: "Mehendi",
+          service: mehendiPick,
+          allocatedBudget: numBudget * 0.05,
+          actualPrice: mehendiPick.price,
+          notes: "Intricate bridal henna design and family guest packages with natural organic henna."
+        });
+        allocatedTotal += mehendiPick.price;
+      }
+    }
+
+    // F. Custom Theme Cake & Bakery (if requested or birthday)
+    if (wantsCake && categorized.cake.length > 0) {
+      const cakePick = pickBestFit(categorized.cake, numBudget * 0.05);
+      if (cakePick) {
+        selectedPackage.push({
+          role: "Custom Celebration Cake",
+          category: "Bakery",
+          service: cakePick,
+          allocatedBudget: numBudget * 0.05,
+          actualPrice: cakePick.price,
+          notes: "Multi-tier designer fondant cake customized to your event theme."
+        });
+        allocatedTotal += cakePick.price;
+      }
+    }
+
+    // G. Solo Musician (Violin / Saxophone / Flute)
+    if (wantsSoloMusician && categorized.soloMusician.length > 0) {
+      const soloPick = pickBestFit(categorized.soloMusician, numBudget * 0.07);
+      if (soloPick) {
+        selectedPackage.push({
+          role: "Solo Instrumental Musician",
+          category: "Live Music",
+          service: soloPick,
+          allocatedBudget: numBudget * 0.07,
+          actualPrice: soloPick.price,
+          notes: "Soulful live saxophone / violin performance for guest entry and cocktail hour."
+        });
+        allocatedTotal += soloPick.price;
+      }
+    }
+
+    // H. Event Anchor / Emcee
+    if (wantsAnchor && categorized.anchor.length > 0) {
+      const anchorPick = pickBestFit(categorized.anchor, numBudget * 0.06);
+      if (anchorPick) {
+        selectedPackage.push({
+          role: "Professional Event Host / Emcee",
+          category: "Anchor",
+          service: anchorPick,
+          allocatedBudget: numBudget * 0.06,
+          actualPrice: anchorPick.price,
+          notes: "Engaging crowd interaction, itinerary coordination, and ceremony hosting."
+        });
+        allocatedTotal += anchorPick.price;
+      }
+    }
+
+    // I. Event Bouncers, Security & Electricians
+    if (wantsSecurityPower && categorized.securityPower.length > 0) {
+      const secPick = pickBestFit(categorized.securityPower, numBudget * 0.05);
+      if (secPick) {
+        selectedPackage.push({
+          role: "Event Power & Security Management",
+          category: "Operations",
+          service: secPick,
+          allocatedBudget: numBudget * 0.05,
+          actualPrice: secPick.price,
+          notes: "Certified on-site electricians, DG power backup, and professional VIP security bouncers."
+        });
+        allocatedTotal += secPick.price;
+      }
+    }
+
+    // J. DJ & Sound (Fallback if entertainment not yet added)
+    if (!selectedPackage.some(p => p.category === "Entertainment" || p.category === "Live Music")) {
+      const musicPick = pickBestFit(categorized.music.length ? categorized.music : categorized.all, numBudget * 0.08);
+      if (musicPick) {
+        selectedPackage.push({
+          role: "Sound & DJ Entertainment",
+          category: "Entertainment",
+          service: musicPick,
+          allocatedBudget: numBudget * 0.08,
+          actualPrice: musicPick.price,
+          notes: "Premium audio system and curated party dance playlist."
+        });
+        allocatedTotal += musicPick.price;
+      }
     }
 
     const remainingSavings = Math.max(0, numBudget - allocatedTotal);
@@ -130,14 +232,15 @@ router.post("/plan-event", async (req, res) => {
       savings: remainingSavings,
       budgetUtilization: `${Math.min(100, Math.round((allocatedTotal / numBudget) * 100))}%`,
       conciergeVerdict: allocatedTotal <= numBudget
-        ? `✨ Excellent fit! We successfully optimized your ₹${numBudget.toLocaleString()} budget with an estimated saving of ₹${remainingSavings.toLocaleString()} for contingency.`
-        : `⚠️ Your selections total ₹${allocatedTotal.toLocaleString()}, slightly exceeding the target by ₹${(allocatedTotal - numBudget).toLocaleString()}. Consider adjusting requirements.`,
+        ? `✨ Excellent fit! We successfully assembled a complete ${selectedPackage.length}-service package within your ₹${numBudget.toLocaleString()} budget with estimated savings of ₹${remainingSavings.toLocaleString()}.`
+        : `⚠️ Your custom bundle totals ₹${allocatedTotal.toLocaleString()}, slightly exceeding the target by ₹${(allocatedTotal - numBudget).toLocaleString()}.`,
       recommendedTimeline: [
-        { time: "03:00 PM", activity: "Vendor Arrival & Stage Setup by Decoration Crew" },
-        { time: "05:30 PM", activity: "Guest Arrival, Welcome Mocktails & Ambient Music" },
-        { time: "07:00 PM", activity: "Main Ceremony / Keynote / Grand Entrance & Photo Session" },
-        { time: "08:30 PM", activity: "Gourmet Buffet Dining & Dessert Station Open" },
-        { time: "10:30 PM", activity: "Celebration Dance Floor & Concluding Photos" }
+        { time: "02:00 PM", activity: "Power & Electrical Check by Event Electrician & Stage Setup" },
+        { time: "04:00 PM", activity: "Bridal Makeup (MUA) & Henna Touchup Session" },
+        { time: "05:30 PM", activity: "Guest Welcome with Live Acoustic/Solo Musician & Welcome Drinks" },
+        { time: "07:00 PM", activity: "Grand Entry Hosted by Emcee & Photo Session" },
+        { time: "08:30 PM", activity: "Gourmet Buffet Dining & Cake Cutting Ceremony" },
+        { time: "10:00 PM", activity: "Celebration Dance Floor with DJ & Closing Photos" }
       ],
       packageItems: selectedPackage
     };

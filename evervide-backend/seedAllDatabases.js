@@ -63,6 +63,57 @@ const approvedVendorsData = [
     location: "Amritsar",
     description: "Sprawling luxury banquets, air-conditioned glasshouses, sea-facing terraces, and heritage courtyards accommodating 100 to 2000 guests.",
     images: ["https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=600&q=80"]
+  },
+  // INDIVIDUAL SPECIALIST VENDORS
+  {
+    name: "Glamour Aura Bridal Studio",
+    email: "glamour_mua@servease.com",
+    password: "password123",
+    businessName: "Glamour Aura Bridal Makeup & Styling (MUA)",
+    phone: "+91 98666 77889",
+    location: "Delhi",
+    description: "Celebrity HD Airbrush bridal makeup artist, engagement hair styling, saree draping, and pre-wedding skin prep.",
+    images: ["https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=600&q=80"]
+  },
+  {
+    name: "Royal Henna & Mehendi Art",
+    email: "royal_henna@servease.com",
+    password: "password123",
+    businessName: "Royal Henna & Bridal Mehendi Artists",
+    phone: "+91 98777 88990",
+    location: "Delhi",
+    description: "Traditional Rajasthani & Arabic bridal mehendi, figure work, organic chemical-free dark stain henna, and guest mehendi squad.",
+    images: ["https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?auto=format&fit=crop&w=600&q=80"]
+  },
+  {
+    name: "SugarCraft Designer Bakery",
+    email: "sugarcraft_cakes@servease.com",
+    password: "password123",
+    businessName: "SugarCraft Boutique Cakes & Confectionery",
+    phone: "+91 98888 99001",
+    location: "Mumbai",
+    description: "Custom multi-tier wedding cakes, thematic birthday fondant cakes, French macarons, and personalized dessert tables.",
+    images: ["https://images.unsplash.com/photo-1535141192574-5d4897c13136?auto=format&fit=crop&w=600&q=80"]
+  },
+  {
+    name: "Sharma Event Power & Electricals",
+    email: "sharma_power@servease.com",
+    password: "password123",
+    businessName: "Sharma Power Generators & Event Electricians",
+    phone: "+91 98999 00112",
+    location: "Delhi",
+    description: "Certified on-site event electricians, 3-phase stage wiring, fairy light canopy connections, and silent generator (DG set) power backup.",
+    images: ["https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80"]
+  },
+  {
+    name: "BlackShield Event Security & Bouncers",
+    email: "blackshield_security@servease.com",
+    password: "password123",
+    businessName: "BlackShield VIP Security & Event Bouncers",
+    phone: "+91 98000 11223",
+    location: "Delhi",
+    description: "Trained, black-suited professional event bouncers, crowd control specialists, VIP escorts, and parking security teams.",
+    images: ["https://images.unsplash.com/photo-1508873696983-2df5293cb32f?auto=format&fit=crop&w=600&q=80"]
   }
 ];
 
@@ -351,6 +402,98 @@ const sampleServicesData = [
     price: 40000,
     description: "Charming traditional brickwork courtyard haveli with heritage arches, ambient central fountain, fairy light canopy, and royal Punjabi ambiance.",
     bookedDates: ["2026-09-02", "2026-09-18"]
+  },
+
+  // --- SPECIALIZED INDIVIDUAL SERVICES (MUA, MEHENDI, CAKES, ELECTRICIANS, BOUNCERS, SOLO MUSICIANS) ---
+  {
+    vendorIndex: 5,
+    name: "HD Airbrush Bridal Makeup & Luxury Hair Styling",
+    category: "Makeup",
+    location: "Delhi",
+    price: 12000,
+    description: "High-definition sweatproof airbrush bridal makeup with MAC / Huda Beauty products, eyelashes, designer floral hair styling, and saree/lehenga draping.",
+    bookedDates: ["2026-09-05", "2026-09-18"]
+  },
+  {
+    vendorIndex: 5,
+    name: "Party Glam Makeup & Hairstyling for Family (3 Pax)",
+    category: "Makeup",
+    location: "Mumbai",
+    price: 8500,
+    description: "Glamorous cocktail and sangeet makeup package for 3 family members including contouring, eye makeup, and modern blow-dry waves.",
+    bookedDates: ["2026-09-08", "2026-09-22"]
+  },
+  {
+    vendorIndex: 6,
+    name: "Organic Rajasthani Bridal Henna & Mehendi Art",
+    category: "Mehendi",
+    location: "Delhi",
+    price: 6500,
+    description: "Customized figure work bridal mehendi (Doli, Baraat, portraits) up to elbows and feet with 100% natural chemical-free eucalyptus oil dark stain henna.",
+    bookedDates: ["2026-09-05", "2026-09-19"]
+  },
+  {
+    vendorIndex: 6,
+    name: "Mehendi Party Package for 15 Wedding Guests",
+    category: "Mehendi",
+    location: "Amritsar",
+    price: 5000,
+    description: "2 professional speed mehendi artists providing beautiful Arabic & floral palms for up to 15 guests during your mehendi ceremony.",
+    bookedDates: ["2026-09-02", "2026-09-16"]
+  },
+  {
+    vendorIndex: 7,
+    name: "3-Tier Theme Fondant Wedding & Anniversary Cake (5kg)",
+    category: "Bakery",
+    location: "Mumbai",
+    price: 4500,
+    description: "Artisanal 3-tier designer cake (Belgian Chocolate Truffle & Red Velvet) with edible sugar pearls, floral cascade, and customized golden topper.",
+    bookedDates: ["2026-09-08", "2026-09-20"]
+  },
+  {
+    vendorIndex: 7,
+    name: "Deluxe Birthday Theme Cake & Dessert Platter",
+    category: "Bakery",
+    location: "Delhi",
+    price: 3000,
+    description: "Customized 3kg character or drip theme birthday cake paired with 12 designer cupcakes and chocolate cake pops.",
+    bookedDates: ["2026-09-07", "2026-09-21"]
+  },
+  {
+    vendorIndex: 3,
+    name: "Harmonic Melodies - Live Saxophone & Violinist for Entry",
+    category: "Live Music",
+    location: "Delhi",
+    price: 9500,
+    description: "Graceful live solo saxophone or acoustic violinist performance playing romantic English and Bollywood instrumentals during guest arrivals and dinner.",
+    bookedDates: ["2026-09-05", "2026-09-12"]
+  },
+  {
+    vendorIndex: 3,
+    name: "Celebrity Wedding Emcee & Stand-Up Host",
+    category: "Anchor",
+    location: "Delhi",
+    price: 11000,
+    description: "Energetic and humorous wedding anchor to host your sangeet games, couple dance introductions, and keep all age groups entertained throughout the night.",
+    bookedDates: ["2026-09-05", "2026-09-20"]
+  },
+  {
+    vendorIndex: 8,
+    name: "On-Site Event Electrician & Silent DG Power Backup (25kVA)",
+    category: "Operations",
+    location: "Delhi",
+    price: 5500,
+    description: "Full event power management: 2 certified standby electricians, 3-phase stage wiring, fairy light connections, and silent diesel generator backup.",
+    bookedDates: ["2026-09-05", "2026-09-12"]
+  },
+  {
+    vendorIndex: 9,
+    name: "Elite Black-Uniformed Event Security Bouncers (4 Guards)",
+    category: "Operations",
+    location: "Delhi",
+    price: 8000,
+    description: "4 well-built, licensed security bouncers in smart black suits for entrance guest verification, stage VIP protection, and parking crowd control.",
+    bookedDates: ["2026-09-05", "2026-09-19"]
   }
 ];
 
@@ -364,7 +507,6 @@ async function seedTarget(uri, dbName) {
   const UserModel = conn.model("User", User.schema);
   const ServiceModel = conn.model("Service", Service.schema);
   const VendorRequestModel = conn.model("VendorRequest", VendorRequest.schema);
-  const BookingModel = conn.model("Booking", Booking.schema);
 
   // 1. Seed / Sync Approved Vendors
   console.log("\n1. Seeding Approved Vendors & Vendor Requests...");
@@ -380,7 +522,7 @@ async function seedTarget(uri, dbName) {
         password: hashedPassword,
         role: "vendor"
       });
-      console.log(`  + Created user vendor: ${u.name}`);
+      console.log(`  + Created vendor user: ${u.name}`);
     } else {
       u.role = "vendor";
       await u.save();
@@ -408,7 +550,6 @@ async function seedTarget(uri, dbName) {
       req.description = v.description;
       req.images = v.images;
       await req.save();
-      console.log(`  ~ Updated Approved VendorRequest for: ${v.businessName}`);
     }
   }
 
@@ -422,7 +563,7 @@ async function seedTarget(uri, dbName) {
         name: pv.name,
         email: pv.email,
         password: hashedPassword,
-        role: "user" // regular user who applied to be a vendor
+        role: "user"
       });
     }
 
@@ -437,13 +578,11 @@ async function seedTarget(uri, dbName) {
         images: pv.images,
         status: "pending"
       });
-      console.log(`  + Created Pending Vendor Application: ${pv.businessName}`);
     }
   }
 
-  // 3. Seed 27 Services
-  console.log("\n3. Seeding 27 Services Catalog...");
-  let sCount = 0;
+  // 3. Seed Services Catalog
+  console.log("\n3. Seeding 37+ Services Catalog...");
   for (const s of sampleServicesData) {
     const ownerId = vendorUserIds[s.vendorIndex] || vendorUserIds[0];
     let sDoc = await ServiceModel.findOne({ name: s.name });
@@ -457,8 +596,7 @@ async function seedTarget(uri, dbName) {
         owner: ownerId,
         bookedDates: s.bookedDates || []
       });
-      sCount++;
-      console.log(`  ✓ Inserted [${s.category}] "${s.name}" (₹${s.price}) in ${s.location}`);
+      console.log(`  ✓ Inserted [${s.category}] "${s.name}" (₹${s.price})`);
     } else {
       sDoc.owner = ownerId;
       sDoc.bookedDates = s.bookedDates || [];
@@ -491,7 +629,7 @@ async function run() {
       console.error(`Error on ${name}:`, e.message);
     }
   }
-  console.log("\n✅ ALL ATLAS DATABASES FULLY SYNCHRONIZED!");
+  console.log("\n✅ ALL ATLAS DATABASES FULLY SYNCHRONIZED WITH SPECIALIZED SERVICES!");
   process.exit(0);
 }
 
