@@ -320,11 +320,23 @@ export default function ServicePage({ params }: any) {
                     <h4 className="text-xs font-serif font-semibold text-[#242424] uppercase tracking-wider">Booking Details</h4>
 
                     {bookingSuccess && (
-                      <div className="bg-[#faf7f1] border border-[#e8dfd2] text-emerald-700 text-xs p-3.5 rounded-none flex items-start gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mt-0.5 text-emerald-600">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                        <span>Booking request sent successfully! The vendor will contact you shortly.</span>
+                      <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs p-4 space-y-3">
+                        <div className="flex items-start gap-2">
+                          <span className="text-base">🎉</span>
+                          <div>
+                            <p className="font-bold uppercase tracking-wider text-[11px]">Request Sent to Vendor!</p>
+                            <p className="text-[11px] text-emerald-800 mt-0.5 font-normal">
+                              The vendor has received your inquiry and will review it in real-time.
+                            </p>
+                          </div>
+                        </div>
+
+                        <Link
+                          href="/my-bookings"
+                          className="block text-center bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[10px] uppercase tracking-wider py-2.5 transition"
+                        >
+                          Track Status in My Requests →
+                        </Link>
                       </div>
                     )}
 
