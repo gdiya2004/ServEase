@@ -1,4 +1,4 @@
-# 🚀 ServEase — On-Demand Services & Event Marketplace
+# 🚀 ServEase — Autonomous AI-Driven Event & Service Marketplace Platform
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.2.4-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2.4-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
@@ -9,13 +9,14 @@
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
 [![Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7?style=for-the-badge&logo=render)](https://render.com/)
 
-**ServEase** is an end-to-end, production-grade service and event marketplace platform designed to bridge the gap between event service vendors, clients, and platform administrators. Built with a modern micro-client architecture using **Next.js 16 (App Router)** and an **Express 5 REST API** backed by **MongoDB Atlas**.
+**ServEase** is an end-to-end, production-grade event service marketplace and autonomous AI event planner designed to bridge the gap between verified event service vendors, clients, and platform administrators. Built with a modern micro-client architecture using **Next.js 16 (App Router)**, **React 19**, and an **Express 5 REST API** backed by **MongoDB Atlas**.
 
 ---
 
-## 🌐 Live Production Links
+## 🌐 Live Production Deployments
 
 * 🖥️ **Live Web Application (Vercel):** [https://serv-ease-omega.vercel.app](https://serv-ease-omega.vercel.app)
+* 🤖 **AI Event Planner (Vercel):** [https://serv-ease-omega.vercel.app/ai-planner](https://serv-ease-omega.vercel.app/ai-planner)
 * 🔌 **Live REST API Server (Render):** [https://servease-backend-2vy8.onrender.com](https://servease-backend-2vy8.onrender.com)
 * 📂 **GitHub Repository:** [https://github.com/gdiya2004/ServEase](https://github.com/gdiya2004/ServEase)
 
@@ -26,27 +27,30 @@
 ```mermaid
 flowchart TD
     subgraph ClientLayer [Client Layer - Next.js 16 & React 19]
-        A[Client Web App] -->|Search & Filter| B[Marketplace Catalog]
-        A -->|JWT Auth| C[User / Vendor / Admin Login]
-        A -->|Submit Booking| D[Booking Engine]
-        A -->|Apply| E[Vendor Onboarding Portal]
-        A -->|Manage| F[Vendor Workspace & Admin Portal]
+        A[Client Web App] -->|Interactive Discovery| B[Marketplace Catalog]
+        A -->|Autonomous AI Planner| C[AI Budget Concierge]
+        A -->|JWT Authentication| D[User / Vendor / Admin Login]
+        A -->|Interactive Booking| E[Date Lock & Calendar Engine]
+        A -->|Live Service Tracker| F[Real-Time My Requests Platform]
+        A -->|Vendor Workspace| G[Vendor Dashboard & Slots]
+        A -->|Admin Governance| H[Admin Command Center]
     end
 
     subgraph APILayer [API Layer - Express.js 5 & Node.js]
-        G[CORS & Security Middleware] --> H[Auth Controller - JWT / bcrypt]
-        G --> I[Services Controller - Regex Filter]
-        G --> J[Bookings Controller]
-        G --> K[Vendor Moderation Controller]
-        G --> L[Reviews Controller]
+        I[CORS & Security Guards] --> J[Auth Controller - JWT / bcrypt]
+        I --> K[Services Controller - Regex Filter & Slots]
+        I --> L[Bookings Controller - Status Engine]
+        I --> M[Vendor Moderation Controller]
+        I --> N[AI Planner Engine - Knapsack Optimization]
+        I --> O[Reviews Controller]
     end
 
-    subgraph DatabaseLayer [Data Layer - MongoDB Atlas]
-        M[(Users Collection)]
-        N[(Services Collection)]
-        O[(Bookings Collection)]
-        P[(VendorRequests Collection)]
-        Q[(Reviews Collection)]
+    subgraph DatabaseLayer [Data Layer - MongoDB Atlas Clusters]
+        P[(Users Collection)]
+        Q[(Services Collection)]
+        R[(Bookings Collection)]
+        S[(VendorRequests Collection)]
+        T[(Reviews Collection)]
     end
 
     ClientLayer -->|HTTPS REST API| APILayer
@@ -55,39 +59,59 @@ flowchart TD
 
 ---
 
-## ✨ Key Features & Role-Based Access Control (RBAC)
+## ✨ Key Technical Pillars & Standout Features
 
-### 👤 1. Customer / Client Experience
-* **Dynamic Search & Filtering:** Case-insensitive regex search querying by Location, Category (Wedding, Decor, Catering, Photography, etc.), Minimum Price, and Maximum Price.
-* **Service Detail Pages:** Dynamic image rendering, full descriptions, location tags, and transparent pricing breakdowns.
-* **Instant Booking System:** Book services directly with customized requirements and direct vendor communication details.
-* **Feedback & Reviews:** Read testimonials and submit verified reviews for completed services.
+### 🤖 1. Autonomous AI Event Concierge & Smart Budget Package Planner
+* **How it Works:** Customers enter their celebration type (*Wedding, Engagement, Birthday, Gala*), target city, guest count, and total budget (e.g. *₹1,00,000*).
+* **Heuristic Optimization Engine (`/api/ai/plan-event`):** Partitions the total budget using industry standard benchmarks:
+  $$\text{Catering: 35\%} \quad | \quad \text{Decor: 30\%} \quad | \quad \text{Photography: 20\%} \quad | \quad \text{DJ/Music: 10\%} \quad | \quad \text{Contingency: 5\%}$$
+* **Best-Fit Knapsack Search:** Matches verified vendors within category quotas, computes total cost & contingency savings, generates a 5-point event schedule, and enables **1-Click Coordinated Bundled Requests**.
 
-### 🧑‍💼 2. Vendor Workspace
-* **Self-Serve Onboarding:** Submit vendor profile with business description, contact information, and portfolio uploads.
-* **Workspace Dashboard:** Real-time metrics tracking active listings, client inquiries, and total valuation.
-* **Service Catalog Management:** Create new service listings with rich metadata or delete obsolete ones.
-* **Booking Pipeline:** Access real-time incoming booking inquiries with full customer contact notes.
+---
 
-### 🛡️ 3. Admin Moderation Portal
-* **Application Review Queue:** Inspect applicant credentials, portfolio submissions, and contact details.
-* **1-Click Approvals:** Automated status updates that immediately grant `vendor` role permissions.
-* **Platform-Wide Bookings Feed:** Centralized audit log of all bookings across every vendor on the platform.
+### 📅 2. Interactive Live Slot & Date Availability Calendar (Airbnb-Style)
+* **Double-Booking Prevention:** Custom `CalendarPicker` component on service pages color-codes dates (**🟢 Available**, **🔴 Booked / Unavailable**, **🟡 Selected**).
+* **Automatic Date Locking:** When a vendor clicks `Accept Booking`, the chosen `eventDate` is automatically appended to the service's `bookedDates` list to lock out conflicting clients.
+* **Vendor Slot Management:** Vendors can manually block or unblock specific calendar dates from their dashboard.
+
+---
+
+### 📱 3. Real-Time Customer Service Management Platform (`/my-bookings`)
+* **Live Background Polling:** Auto-syncs every 12 seconds with a manual `🔄 Refresh Status` control.
+* **4-Stage Visual Fulfillment Stepper:**  
+  `[1. Requested ✓]  ➔  [2. Under Vendor Review ⏳]  ➔  [3. Decision: Accepted ✅ / Disapproved ❌]  ➔  [4. Service Delivered ⭐]`
+* **Context-Aware Action Banners:**
+  * **Accepted:** Shows glowing emerald badge + direct **`📞 Call Vendor`** and **`💬 WhatsApp`** shortcuts with pre-filled event inquiry text.
+  * **Disapproved:** Shows rose warning banner + 1-click **`🔍 Find Alternative Services`** link.
+
+---
+
+### 🧑‍💼 4. Vendor Workspace & Interactive Fulfillment Pipeline (`/dashboard`)
+* **Listing Management:** Create and delete event listings, track total portfolio valuation, and manage slot calendars.
+* **Interactive Booking Pipeline:** Filter bookings by `All`, `Pending`, `Confirmed`, and `Completed`.
+* **1-Click Actions:** Real-time state transitions: **`✓ Accept Booking`**, **`✕ Decline`**, and **`✓ Mark as Completed`**.
+
+---
+
+### 🛡️ 5. Admin Governance & Command Center (`/admin`)
+* **Pending Vendor Applications:** Inspect applicant credentials, portfolio images, and business details with 1-click **Approve** and **Reject** controls.
+* **Approved Vendors Directory:** Dedicated audit table showing verified vendor accounts, contact numbers, locations, and active status.
+* **Customer Bookings Feed:** Centralized audit log of all customer reservations across every vendor on the platform.
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Domain | Technology | Purpose |
+| Layer | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Frontend Framework** | Next.js 16.2.4 (App Router) | High-performance React framework with server/client components |
-| **UI Library** | React 19.2.4 | Dynamic reactive component architecture |
-| **Styling** | Tailwind CSS v4 | Responsive, mobile-first design tokens and glassmorphism UI |
-| **Backend Runtime** | Node.js (v22.x / v24.x) | Asynchronous non-blocking runtime environment |
-| **API Framework** | Express.js 5.x | Scalable REST API with custom routing and middleware |
+| **Frontend Framework** | Next.js 16.2.4 (App Router) | High-performance React framework with hybrid SSR / Client components |
+| **UI Library** | React 19.2.4 | Modern reactive component architecture & hooks |
+| **Styling** | Tailwind CSS v4 | Curated HSL color palettes, luxury glassmorphism, and responsive layouts |
+| **Backend Runtime** | Node.js (v22.x / v24.x) | Asynchronous non-blocking JavaScript server environment |
+| **API Framework** | Express.js 5.x | Scalable REST API with custom CORS and path routing |
 | **Database** | MongoDB Atlas | Cloud NoSQL document database with Mongoose ODM |
-| **Authentication** | JWT (JSON Web Tokens) & bcryptjs | Stateless token-based auth with salted password hashing |
-| **Hosting** | Vercel (Frontend) & Render (Backend) | Auto-deploying CI/CD cloud infrastructure |
+| **Authentication** | JWT (JSON Web Tokens) & bcryptjs | Stateless token authorization with salted cryptographic hashing |
+| **Hosting & CI/CD** | Vercel & Render | Continuous deployment pipelines for frontend and backend |
 
 ---
 
@@ -98,11 +122,13 @@ ServEase/
 ├── evervice-frontend/             # Next.js Frontend Application
 │   ├── src/
 │   │   └── app/
-│   │       ├── admin/             # Admin moderation portal
-│   │       ├── components/        # Reusable UI components (Navbar, FilterBar, ServiceCard)
-│   │       ├── dashboard/         # Vendor workspace & listing creation (/create)
+│   │       ├── admin/             # Admin command center & vendor directory
+│   │       ├── ai-planner/        # AI Event Concierge & Smart Budget Package Planner
+│   │       ├── components/        # Reusable UI components (Navbar, CalendarPicker)
+│   │       ├── dashboard/         # Vendor workspace, slot calendar & booking pipeline
 │   │       ├── login/             # User & Vendor authentication
-│   │       ├── services/[id]/     # Dynamic service details & booking modal
+│   │       ├── my-bookings/       # Real-time customer service management platform
+│   │       ├── services/[id]/     # Dynamic service details & live calendar booking
 │   │       ├── signup/            # Account registration
 │   │       ├── vendor-request/    # Vendor application form
 │   │       └── page.tsx           # Main marketplace discovery page
@@ -113,21 +139,21 @@ ServEase/
 │   ├── middleware/
 │   │   └── auth.js                # JWT verification & role authorization guards
 │   ├── models/
-│   │   ├── Booking.js             # Booking schema with ref relations
+│   │   ├── Booking.js             # Booking schema with eventDate and status enums
 │   │   ├── Review.js              # Service reviews schema
-│   │   ├── Service.js             # Marketplace service schema
+│   │   ├── Service.js             # Marketplace service schema with bookedDates array
 │   │   ├── User.js                # User & role schema (user, vendor, admin)
 │   │   └── VendorRequest.js       # Vendor application submission schema
 │   ├── routes/
+│   │   ├── aiRoutes.js            # Heuristic AI Event Concierge & Budget Planner
 │   │   ├── authRoutes.js          # Signup, login & profile sync endpoints
-│   │   ├── bookingRoutes.js       # Booking operations & admin retrieval
+│   │   ├── bookingRoutes.js       # Status updates, date locking & user/vendor queries
 │   │   ├── reviewRoutes.js        # Review CRUD operations
-│   │   ├── serviceRoutes.js       # Filtered search & service management
-│   │   └── vendorRoutes.js        # Application submission, approval & rejection
-│   ├── import_local_data.js       # Database seeder utility
-│   ├── make_admin.js              # Admin initialization script
+│   │   ├── serviceRoutes.js       # Filtered search & calendar slot availability
+│   │   └── vendorRoutes.js        # Approved directory & application review
+│   ├── seedAllDatabases.js        # Universal MongoDB Atlas multi-target seeder
 │   ├── package.json
-│   └── server.js                  # Express application entrypoint
+│   └── server.js                  # Express 5 application entrypoint
 │
 ├── .gitignore                     # Security exclusions (.env, node_modules, build artifacts)
 └── README.md                      # Project documentation
@@ -137,32 +163,36 @@ ServEase/
 
 ## 📡 REST API Reference
 
+### 🤖 AI Event Concierge (`/api/ai`)
+* `POST /api/ai/plan-event` — Generates an optimized multi-vendor package, budget breakdown, savings estimate, and timeline schedule based on event type, location, guest count, and budget.
+
+### 🎪 Services & Calendar Slots (`/api/services`)
+* `GET /api/services` — Query services with optional query filters (`location`, `category`, `minPrice`, `maxPrice`)
+* `GET /api/services/:id` — Fetch service details
+* `GET /api/services/:id/availability` — Retrieve booked and blocked calendar dates
+* `POST /api/services/:id/availability` — Vendor toggle to block or unblock specific calendar dates
+* `GET /api/services/vendor/:id` — Fetch all listings owned by a specific vendor
+* `POST /api/services/add` — Create a new service listing *(Vendor Guarded)*
+* `DELETE /api/services/:id` — Remove an existing service listing *(Vendor Guarded)*
+
+### 📅 Bookings & Status Machine (`/api/bookings`)
+* `POST /api/bookings/add` — Submit a service booking inquiry with preferred `eventDate`
+* `PATCH /api/bookings/:id/status` — Update booking status (`pending`, `confirmed`, `rejected`, `completed`) and automatically locks/unlocks calendar dates
+* `GET /api/bookings/user/:id` — Retrieve booking history and live status for a customer
+* `GET /api/bookings/vendor/:id` — Retrieve bookings received by a vendor
+* `GET /api/bookings/all` — Retrieve all platform bookings *(Admin Guarded)*
+
+### 🧑‍💼 Vendor Operations & Moderation (`/api/vendor`)
+* `POST /api/vendor/request` — Submit vendor partnership application
+* `GET /api/vendor/requests` — Retrieve pending applications *(Admin Guarded)*
+* `GET /api/vendor/approved` — Retrieve verified approved vendors directory *(Admin Guarded)*
+* `POST /api/vendor/approve` — Approve application and promote user to `vendor` *(Admin Guarded)*
+* `POST /api/vendor/reject` — Reject application *(Admin Guarded)*
+
 ### 🔐 Authentication (`/api/auth`)
 * `POST /api/auth/signup` — Register new user account
 * `POST /api/auth/login` — Authenticate and receive JWT token
 * `GET /api/auth/user/:id` — Fetch user role and profile state
-
-### 🎪 Services (`/api/services`)
-* `GET /api/services` — Query services with optional query filters (`location`, `category`, `minPrice`, `maxPrice`)
-* `GET /api/services/:id` — Fetch details of a specific service
-* `GET /api/services/vendor/:id` — Fetch all services created by a specific vendor
-* `POST /api/services/add` — Create a new service listing *(Vendor)*
-* `DELETE /api/services/:id` — Remove an existing service listing *(Vendor)*
-
-### 📅 Bookings (`/api/bookings`)
-* `POST /api/bookings/add` — Submit a service booking inquiry
-* `GET /api/bookings/vendor/:id` — Retrieve bookings received by a vendor
-* `GET /api/bookings/all` — Retrieve all platform bookings *(Admin Guarded)*
-
-### 🧑‍💼 Vendor Operations (`/api/vendor`)
-* `POST /api/vendor/request` — Submit vendor partnership application
-* `GET /api/vendor/requests` — Retrieve pending applications *(Admin Guarded)*
-* `POST /api/vendor/approve` — Approve application and upgrade user role *(Admin Guarded)*
-* `POST /api/vendor/reject` — Reject application *(Admin Guarded)*
-
-### ⭐ Reviews (`/api/reviews`)
-* `POST /api/reviews/add` — Post a service review
-* `GET /api/reviews/:serviceId` — Get all reviews for a service
 
 ---
 
@@ -170,7 +200,7 @@ ServEase/
 
 ### 1. Prerequisites
 * Node.js v20+ installed
-* MongoDB instance (local or MongoDB Atlas connection string)
+* MongoDB Atlas cluster or local MongoDB instance
 * Git
 
 ### 2. Clone Repository
@@ -186,15 +216,14 @@ npm install
 
 # Create .env file
 echo "PORT=5000" >> .env
-echo "MONGO_URI=mongodb://127.0.0.1:27017/servease" >> .env
-echo "JWT_SECRET=your_secret_jwt_key" >> .env
+echo "MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/test?retryWrites=true&w=majority" >> .env
+echo "JWT_SECRET=your_secret_jwt_key_2026" >> .env
 
-# (Optional) Seed sample data and create admin account
-node import_local_data.js
-node make_admin.js
+# Seed 27+ realistic services & approved vendor requests
+node seedAllDatabases.js
 
 # Start backend server
-npm start
+node server.js
 ```
 
 ### 4. Frontend Setup
@@ -209,7 +238,7 @@ echo "NEXT_PUBLIC_API_URL=http://localhost:5000" >> .env.local
 npm run dev
 ```
 
-Open **[http://localhost:3000](http://localhost:3000)** (or `http://localhost:3001`) in your browser.
+Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ---
 
@@ -217,7 +246,7 @@ Open **[http://localhost:3000](http://localhost:3000)** (or `http://localhost:30
 
 * **Password Protection:** Cryptographic hashing using `bcryptjs` with salt rounds.
 * **Token Authorization:** Stateless JWT tokens containing signed user ID and role payload.
-* **CORS Protection:** Configured cross-origin resource sharing allowing safe API consumption from verified clients.
+* **CORS & Preflight Handling:** Configured Express 5 preflight handlers allowing safe API consumption.
 * **Role Verification Middleware:** Route-level interceptors enforcing admin and vendor permission boundaries.
 
 ---
