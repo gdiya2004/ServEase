@@ -143,6 +143,14 @@ export default function Navbar() {
                     </div>
 
                     <div className="p-2.5 flex flex-col gap-1 text-[10px] uppercase font-bold tracking-wider">
+                      <Link
+                        href="/my-bookings"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="block px-2.5 py-2 hover:bg-[#efe7da]/40 text-[#6b6258] hover:text-[#242424] transition-colors"
+                      >
+                        My Bookings
+                      </Link>
+
                       {user.role === "vendor" && (
                         <Link
                           href="/dashboard"
@@ -259,7 +267,14 @@ export default function Navbar() {
                 </span>
               </div>
               
-              <div className="flex gap-2 pt-1">
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Link
+                  href="/my-bookings"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex-1 text-center bg-white border border-[#e8dfd2] text-[#6b6258] hover:text-[#242424] font-bold text-[9px] uppercase tracking-wider py-2.5 transition duration-150"
+                >
+                  My Bookings
+                </Link>
                 {user.role === "vendor" && (
                   <Link
                     href="/dashboard"

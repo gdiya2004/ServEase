@@ -28,10 +28,21 @@ router.post("/request", async (req, res) => {
 
 router.get("/requests", verifyToken, verifyAdmin, async (req, res) => {
   try {
-   const requests = await VendorRequest.find({
-  status: "pending"
-}).populate("userId");
+    const requests = await VendorRequest.find({
+      status: "pending"
+    }).populate("userId").sort({ createdAt: -1 });
     res.json(requests);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/approved", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const approvedRequests = await VendorRequest.find({
+      status: "approved"
+    }).populate("userId").sort({ updatedAt: -1 });
+    res.json(approvedRequests);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -14,11 +14,31 @@ export default function Home() {
   const [searchCategory, setSearchCategory] = useState("");
   const [searchMinPrice, setSearchMinPrice] = useState("");
   const [searchMaxPrice, setSearchMaxPrice] = useState("");
+  const [showAll, setShowAll] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryTrigger, setRetryTrigger] = useState(0);
   const [user, setUser] = useState<any>(null);
+
+  const hasActiveFilter = Boolean(
+    (filters.location && filters.location !== "") ||
+    (filters.category && filters.category !== "") ||
+    (filters.minPrice && filters.minPrice !== "") ||
+    (filters.maxPrice && filters.maxPrice !== "") ||
+    searchLocation || searchCategory || searchMinPrice || searchMaxPrice
+  );
+
+  const displayedServices = hasActiveFilter || showAll ? services : services.slice(0, 4);
+
+  const handleClearFilters = () => {
+    setSearchLocation("");
+    setSearchCategory("");
+    setSearchMinPrice("");
+    setSearchMaxPrice("");
+    setFilters({});
+    setShowAll(false);
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -293,10 +313,50 @@ export default function Home() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {services.map((service: any) => (
-              <ServiceCard key={service._id} service={service} />
-            ))}
+          <div className="space-y-8">
+            {/* Filter / Catalog status bar */}
+            <div className="flex flex-wrap justify-between items-center pb-2 border-b border-[#e8dfd2]/60 text-xs">
+              <div className="flex items-center gap-2">
+                {hasActiveFilter ? (
+                  <span className="bg-[#efe7da] text-[#c99a24] text-[10px] uppercase font-bold tracking-widest px-3 py-1">
+                    🔍 Filtered Results: {services.length} Event{services.length !== 1 ? "s" : ""}
+                  </span>
+                ) : (
+                  <span className="text-[#6b6258] text-[11px] uppercase tracking-wider font-semibold">
+                    ✨ Showing {displayedServices.length} of {services.length} Featured Events
+                  </span>
+                )}
+              </div>
+
+              {hasActiveFilter && (
+                <button
+                  type="button"
+                  onClick={handleClearFilters}
+                  className="text-xs text-rose-600 hover:text-rose-700 font-semibold uppercase tracking-wider underline cursor-pointer"
+                >
+                  Clear Filters ✕
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {displayedServices.map((service: any) => (
+                <ServiceCard key={service._id} service={service} />
+              ))}
+            </div>
+
+            {/* View All Toggle when not filtering and more than 4 items exist */}
+            {!hasActiveFilter && services.length > 4 && (
+              <div className="text-center pt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowAll(prev => !prev)}
+                  className="bg-[#242424] hover:bg-[#3a3a3a] text-white font-semibold text-xs tracking-wider uppercase px-8 py-3.5 rounded-none transition duration-200 cursor-pointer btn-premium"
+                >
+                  {showAll ? "Show Top 4 Featured Events ↑" : `View All ${services.length} Available Events ↓`}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </section>
