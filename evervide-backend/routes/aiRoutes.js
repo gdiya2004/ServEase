@@ -30,6 +30,25 @@ router.post("/plan-event", async (req, res) => {
     // 📅 Availability Filter: Exclude vendors already booked on the selected event date
     if (selectedEventDate) {
       availableServices = availableServices.filter(s => !s.bookedDates || !s.bookedDates.includes(selectedEventDate));
+      
+      // 🛡️ Edge-Case Guard: If 100% of vendors are booked on this date
+      if (availableServices.length === 0) {
+        return res.json({
+          success: true,
+          plan: {
+            eventTitle: `Custom AI Curated ${eventName}`,
+            location: cleanLocation || "Selected Region",
+            eventDate: selectedEventDate,
+            guestCount: numGuests,
+            targetBudget: numBudget,
+            totalPackageCost: 0,
+            savings: numBudget,
+            budgetUtilization: "0%",
+            conciergeVerdict: `⚠️ Peak Date Alert: All verified vendors in this region are fully booked on ${selectedEventDate}. Please consider selecting an alternate date (e.g. an adjacent weekend or date) to view available packages.`,
+            packageItems: []
+          }
+        });
+      }
     }
 
     // 2. Classify services into distinct categories
