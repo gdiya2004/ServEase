@@ -32,6 +32,7 @@ const getCategoryImage = (category: string) => {
 
 export default function AIPlannerPage() {
   const [eventType, setEventType] = useState("Luxury Wedding");
+  const [eventDate, setEventDate] = useState("");
   const [location, setLocation] = useState("Delhi");
   const [guestCount, setGuestCount] = useState("150");
   const [budget, setBudget] = useState("100000");
@@ -62,6 +63,7 @@ export default function AIPlannerPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           eventType,
+          eventDate,
           location,
           guestCount: Number(guestCount) || 100,
           budget: Number(budget) || 100000,
@@ -109,7 +111,8 @@ export default function AIPlannerPage() {
             userId: user._id,
             name: user.name || "Customer",
             phone: "+91 9999999999",
-            message: `[AI Package Booking] ${eventType} for ${guestCount} guests in ${location}. Budget quota: ₹${item.actualPrice}`
+            eventDate: eventDate || plan?.eventDate || "",
+            message: `[AI Package Booking] ${eventType} for ${guestCount} guests in ${location}${eventDate ? ` on ${eventDate}` : ""}. Budget quota: ₹${item.actualPrice}`
           })
         });
         successCount++;
@@ -149,7 +152,7 @@ export default function AIPlannerPage() {
           {/* AI Planner Input Form */}
           <div className="bg-white border border-[#e8dfd2] p-6 sm:p-8 shadow-xs">
             <form onSubmit={handleGeneratePlan} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {/* Event Type */}
                 <div>
                   <label className="block text-[9px] font-bold uppercase tracking-widest text-[#6b6258] mb-1.5">
@@ -167,6 +170,20 @@ export default function AIPlannerPage() {
                     <option value="Anniversary">Anniversary Celebration</option>
                     <option value="Cocktail & DJ Night">Cocktail & DJ Night</option>
                   </select>
+                </div>
+
+                {/* Event Date */}
+                <div>
+                  <label className="block text-[9px] font-bold uppercase tracking-widest text-[#6b6258] mb-1.5">
+                    Event Date
+                  </label>
+                  <input
+                    type="date"
+                    value={eventDate}
+                    onChange={e => setEventDate(e.target.value)}
+                    min={new Date().toISOString().split("T")[0]}
+                    className="glass-input w-full px-3.5 py-3 text-xs uppercase tracking-wider bg-white focus:outline-none cursor-pointer"
+                  />
                 </div>
 
                 {/* Location */}
@@ -292,7 +309,7 @@ export default function AIPlannerPage() {
                       {plan.eventTitle}
                     </h2>
                     <p className="text-[#6b6258] text-xs font-medium mt-1">
-                      📍 {plan.location} • 👥 ~{plan.guestCount} Guests • 🎯 Target Budget: ₹{plan.targetBudget?.toLocaleString()}
+                      📍 {plan.location} {plan.eventDate ? `• 📅 ${plan.eventDate}` : ""} • 👥 ~{plan.guestCount} Guests • 🎯 Target Budget: ₹{plan.targetBudget?.toLocaleString()}
                     </p>
                   </div>
 
@@ -411,30 +428,6 @@ export default function AIPlannerPage() {
                 </div>
               </div>
 
-              {/* Recommended Event Itinerary Timeline */}
-              {plan.recommendedTimeline && (
-                <div className="bg-white border border-[#e8dfd2] p-6 sm:p-8 space-y-4">
-                  <h3 className="text-lg font-serif font-bold text-[#242424] uppercase tracking-wider">
-                    Suggested Event Day Schedule
-                  </h3>
-                  <p className="text-xs text-[#6b6258] uppercase tracking-wider">
-                    Coordinated timeline for seamless vendor execution
-                  </p>
-
-                  <div className="space-y-3 pt-2">
-                    {plan.recommendedTimeline.map((step: any, i: number) => (
-                      <div key={i} className="flex items-start gap-4 p-3 bg-[#faf7f1]/60 border border-[#e8dfd2]/60">
-                        <span className="font-mono font-bold text-xs text-[#c99a24] bg-[#efe7da] px-2 py-1 flex-shrink-0">
-                          {step.time}
-                        </span>
-                        <span className="text-xs text-[#242424] font-medium leading-relaxed mt-0.5">
-                          {step.activity}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>

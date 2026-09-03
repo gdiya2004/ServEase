@@ -5,13 +5,14 @@ const Service = require("../models/Service");
 // 🤖 AI Event Concierge & Smart Budget Package Planner
 router.post("/plan-event", async (req, res) => {
   try {
-    const { eventType, location, guestCount, budget, preferences } = req.body;
+    const { eventType, location, guestCount, budget, preferences, eventDate } = req.body;
 
     const numBudget = Number(budget) || 50000;
     const numGuests = Number(guestCount) || 100;
     const cleanLocation = (location || "").trim();
     const eventName = eventType || "Celebration Event";
     const userPref = (preferences || "").toLowerCase();
+    const selectedEventDate = (eventDate || "").trim();
 
     // 1. Fetch available services from DB matching location or general catalog
     let filter = {};
@@ -24,6 +25,11 @@ router.post("/plan-event", async (req, res) => {
     // Fallback to all available if location has very few
     if (availableServices.length === 0) {
       availableServices = await Service.find().populate("owner", "name email");
+    }
+
+    // 📅 Availability Filter: Exclude vendors already booked on the selected event date
+    if (selectedEventDate) {
+      availableServices = availableServices.filter(s => !s.bookedDates || !s.bookedDates.includes(selectedEventDate));
     }
 
     // 2. Classify services into distinct categories
@@ -226,6 +232,7 @@ router.post("/plan-event", async (req, res) => {
     const aiSummary = {
       eventTitle: `Custom AI Curated ${eventName}`,
       location: cleanLocation || "Selected Region",
+      eventDate: selectedEventDate,
       guestCount: numGuests,
       targetBudget: numBudget,
       totalPackageCost: allocatedTotal,
@@ -234,14 +241,6 @@ router.post("/plan-event", async (req, res) => {
       conciergeVerdict: allocatedTotal <= numBudget
         ? `✨ Excellent fit! We successfully assembled a complete ${selectedPackage.length}-service package within your ₹${numBudget.toLocaleString()} budget with estimated savings of ₹${remainingSavings.toLocaleString()}.`
         : `⚠️ Your custom bundle totals ₹${allocatedTotal.toLocaleString()}, slightly exceeding the target by ₹${(allocatedTotal - numBudget).toLocaleString()}.`,
-      recommendedTimeline: [
-        { time: "02:00 PM", activity: "Power & Electrical Check by Event Electrician & Stage Setup" },
-        { time: "04:00 PM", activity: "Bridal Makeup (MUA) & Henna Touchup Session" },
-        { time: "05:30 PM", activity: "Guest Welcome with Live Acoustic/Solo Musician & Welcome Drinks" },
-        { time: "07:00 PM", activity: "Grand Entry Hosted by Emcee & Photo Session" },
-        { time: "08:30 PM", activity: "Gourmet Buffet Dining & Cake Cutting Ceremony" },
-        { time: "10:00 PM", activity: "Celebration Dance Floor with DJ & Closing Photos" }
-      ],
       packageItems: selectedPackage
     };
 

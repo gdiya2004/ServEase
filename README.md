@@ -65,7 +65,7 @@ flowchart TD
 * **Dynamic Natural Language Intent Engine:** Captures celebration type (*Wedding, Engagement, Birthday, Gala*), city, guest count, total budget, and explicit aesthetic requests.
 * **Semantic Category Mapping & Knapsack Optimization (`/api/ai/plan-event`):** Partitions the budget using adaptive industry benchmarks across primary & specialized services:
   $$\text{Catering: 32\%} \quad | \quad \text{Decor: 28\%} \quad | \quad \text{Photography: 18\%} \quad | \quad \text{MUA / Makeup: 8\%} \quad | \quad \text{DJ / Sound: 8\%} \quad | \quad \text{Solo Music / Anchor: 6\%} \quad | \quad \text{Mehendi / Cake: 5\%} \quad | \quad \text{Power / Security: 5\%}$$
-* **Best-Fit Knapsack Search:** Matches verified vendors within category quotas, computes total package cost & contingency savings, creates a 6-point chronological event day schedule, and enables **1-Click Coordinated Bundled Bookings**.
+* **Best-Fit Knapsack Search:** Matches verified vendors within category quotas, computes total package cost & contingency savings, and enables **1-Click Coordinated Bundled Bookings**.
 
 ---
 
@@ -180,7 +180,7 @@ ServEase/
 ## 📡 REST API Reference
 
 ### 🤖 AI Event Concierge (`/api/ai`)
-* `POST /api/ai/plan-event` — Generates an optimized multi-vendor package, budget breakdown, savings estimate, and timeline schedule based on event type, location, guest count, and budget.
+* `POST /api/ai/plan-event` — Generates an optimized multi-vendor package, budget breakdown, and savings estimate based on event type, location, guest count, and budget.
 
 ### 🎪 Services & Calendar Slots (`/api/services`)
 * `GET /api/services` — Query services with optional query filters (`location`, `category`, `minPrice`, `maxPrice`)
